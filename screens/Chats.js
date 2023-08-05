@@ -2,15 +2,16 @@ import { collection, onSnapshot, query, where } from "@firebase/firestore";
 import React, { useContext, useEffect } from "react";
 import { View, Text, TouchableOpacity } from "react-native";
 import GlobalContext from "../context/Context";
-import { auth, db } from "../firebase";
 import ContactsFloatingIcon from "../components/ContactsFloatingIcon";
 import LisItem from "../components/LisItem";
 import useContacts from "../hooks/useHooks";
 import * as Animatable from 'react-native-animatable';
 import Icon from 'react-native-vector-icons/FontAwesome';
+import firebase from '../firebase'
 
 export default function Chats({ navigation }) {
-  const { currentUser } = auth;
+  const db = firebase.firestore();
+  const { currentUser } = firebase.auth().currentUser;
   const { rooms, setRooms, setUnfilteredRooms } = useContext(GlobalContext);
   const contacts = useContacts();
   const chatsQuery = query(
