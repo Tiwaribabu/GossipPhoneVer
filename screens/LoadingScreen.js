@@ -18,12 +18,12 @@ export default function LoadingScreen ({navigation}) {
           
       if (user) {
         
-      navigation.navigate('Chats')
+        navigation.navigate('Chats')
        
         // ...
       }
       else{
-       navigation.navigate('Login')
+       navigation.navigate('SplashScreen')
       } 
     });
       
@@ -32,10 +32,23 @@ export default function LoadingScreen ({navigation}) {
    
   }, [])
     
+  return (
+    <NavigationContainer>
+      <Stack.Navigator initialRouteName="Chats">
+        <Stack.Screen name="LoadingScreen" component={LoadingScreen} />
+        <Stack.Screen name="Chats" component={Chats} />
+        <Stack.Screen name="Profile" component={Profile} />
+      </Stack.Navigator>
+    </NavigationContainer>
+  );
+};
 
 
-}
+
 
 
 
 const styles = StyleSheet.create({})
+
+
+

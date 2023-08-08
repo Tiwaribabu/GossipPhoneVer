@@ -11,7 +11,7 @@ import firebase from '../firebase'
 
 export default function Chats({ navigation }) {
   const db = firebase.firestore();
-  const { currentUser } = firebase.auth().currentUser;
+  const currentUser = firebase.auth().currentUser;
   const { rooms, setRooms, setUnfilteredRooms } = useContext(GlobalContext);
   const contacts = useContacts();
   const chatsQuery = query(

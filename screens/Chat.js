@@ -11,6 +11,7 @@ import { addDoc, collection, doc, onSnapshot, setDoc, updateDoc } from "@firebas
 import { Actions, Bubble, GiftedChat, InputToolbar } from "react-native-gifted-chat";
 import { pickImage, uploadImage } from "../utils";
 import ImageView from "react-native-image-viewing";
+import firebase from '../firebase'
 
 const randomId = nanoid();
 
@@ -20,7 +21,7 @@ export default function Chat() {
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedImageView, setSelectedImageView] = useState("");
   const { theme: { colors } } = useContext(GlobalContext);
-  const { currentUser } = auth;
+  const currentUser = firebase.auth().currentUser;
   const route = useRoute();
   const room = route.params.room;
   const selectedImage = route.params.image;

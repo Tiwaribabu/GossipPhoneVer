@@ -1,57 +1,66 @@
-import React, { useState } from 'react';
-import { View, StyleSheet, ImageBackground, Dimensions, Text, TouchableOpacity, Image, ActivityIndicator } from 'react-native';
-import { Input, Button } from 'react-native-elements';
+import React, { useState, useRef } from 'react';
+import { View, StyleSheet, ImageBackground, Dimensions, Text, TouchableOpacity, Image, ActivityIndicator, Alert } from 'react-native';
+import { Input } from 'react-native-elements';
 import Icon from 'react-native-vector-icons/FontAwesome';
-import { auth, signInWithPhoneNumber } from '../firebase';
-import { RecaptchaVerifier } from 'firebase/auth';
+import { getAuth } from 'firebase/auth';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import * as Animatable from 'react-native-animatable';
+import { FirebaseRecaptchaVerifierModal } from 'expo-firebase-recaptcha';
+import firebase from 'firebase/compat/app';
+import { firebaseConfig } from '../firebase';
 
 const screenheight = Dimensions.get("window").height;
 
 export default function Login({ navigation }) {
   const [phoneNumber, setPhoneNumber] = useState('');
-  const [error, setError] = useState('');
-  const [message, setMessage] = useState('');
-  const [loading, setLoading] = useState(false);
+  const [verificationId, setVerificationId] = useState(null);
+  const [code, setCode] = useState('');
+  const recaptchaVerifier = useRef(null);
 
   const openRegisterScreen = () => {
     navigation.navigate('Register');
   };
 
-  const openForgotPasswordScreen = () => {
-    navigation.navigate('ForgotPassword');
+  const handleSendOtp = async () => {
+    try {
+      const phoneProvider = new firebase.auth.PhoneAuthProvider();
+      const verificationId = await phoneProvider.verifyPhoneNumber(
+        phoneNumber,
+        recaptchaVerifier.current
+      );
+
+      setVerificationId(verificationId);
+      Alert.alert('Verification code has been sent to your phone.');
+
+    } catch (error) {
+      console.log(error);
+      Alert.alert('Failed to send verification code.');
+    }
   };
 
-  const login = () => {
-    setLoading(true);
-    signInWithPhoneNumber(auth, phoneNumber)
-      .then((confirmationResult) => {
-        const verificationCode = prompt('Enter the verification code sent to your phone number');
-        return confirmationResult.confirm(verificationCode);
-      })
-      .then((userCredential) => {
-        setLoading(false);
-        const user = userCredential.user;
-        setMessage('Welcome');
-        navigation.navigate("Chats");
-      })
-      .catch((error) => {
-        setLoading(false);
-        if (error.code === 'auth/invalid-phone-number') {
-          setError('The phone number you entered is invalid.');
-        } else if (error.code === 'auth/missing-phone-number') {
-          setError('Please enter your phone number.');
-        } else if (error.code === 'auth/quota-exceeded') {
-          setError('SMS quota exceeded. Please try again later.');
-        } else {
-          setError(error.message);
-        }
-      });
+  const handleVerifyOtp = async () => {
+    try {
+      const credential = firebase.auth.PhoneAuthProvider.credential(
+        verificationId,
+        code
+      );
+
+      await firebase.auth().signInWithCredential(credential);
+      Alert.alert('Successfully authenticated with phone number!');
+      navigation.navigate('Chats')
+    } catch (error) {
+      console.log(error);
+      Alert.alert('Failed to verify OTP.');
+    }
   };
+
   return (
     <KeyboardAwareScrollView style={{ flex: 1 }}>
       <ImageBackground source={require('../assets/Flash.jpg')} style={styles.background} resizeMode="cover">
+        <FirebaseRecaptchaVerifierModal
+          ref={recaptchaVerifier}
+          firebaseConfig={firebaseConfig}
+        />
         <Animatable.View animation="slideInUp" style={styles.container}>
           <Image source={require('../assets/logo.png')} style={styles.logo} />
           <Text style={styles.title}>Welcome to Chat App</Text>
@@ -65,26 +74,24 @@ export default function Login({ navigation }) {
             autoCompleteType='tel'
             keyboardType='phone-pad'
           />
-          {error ? <Text style={styles.errorText}>{error}</Text> : null}
-          {message ? <Text style={styles.messageText}>{message}</Text> : null}
-          {loading ? (
-            <>
-              <ActivityIndicator size="large" color="#FAAB78" />
-              <Text style={styles.loadingText}>Logging in...</Text>
-            </>
-          ) : (
-            <>
-              <TouchableOpacity style={styles.button} onPress={login}>
-                <Text style={styles.buttonText}>Sign In</Text>
-              </TouchableOpacity>
-              <TouchableOpacity onPress={openForgotPasswordScreen}>
-                <Text style={styles.forgotPasswordText}>Forgot Password?</Text>
-              </TouchableOpacity>
-              <TouchableOpacity onPress={openRegisterScreen}>
-                <Text style={styles.signUpText}>Not a user? Sign up</Text>
-              </TouchableOpacity>
-            </>
-          )}
+          <TouchableOpacity style={styles.button} onPress={handleSendOtp}>
+            <Text style={styles.buttonText}>Send OTP</Text>
+          </TouchableOpacity>
+          <Input
+            placeholder='OTP'
+            leftIcon={<Icon name='lock' size={18} color='grey' />}
+            value={code}
+            onChangeText={(text) => setCode(text)}
+            autoCapitalize='none'
+            autoCompleteType='password'
+            secureTextEntry
+          />
+          <TouchableOpacity style={styles.button} onPress={handleVerifyOtp}>
+            <Text style={styles.buttonText}>Verify OTP</Text>
+          </TouchableOpacity>
+          <TouchableOpacity onPress={openRegisterScreen}>
+            <Text style={styles.signUpText}>New user? Sign up</Text>
+          </TouchableOpacity>
         </Animatable.View>
       </ImageBackground>
     </KeyboardAwareScrollView>
@@ -116,6 +123,7 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     textAlign: 'center',
   },
+
   subTitle: {
     fontSize: 16,
     fontWeight: 'bold',
@@ -143,25 +151,25 @@ const styles = StyleSheet.create({
     height: 40,
     backgroundColor: '#FAAB78',
     justifyContent: 'center',
-    alignItems: 'center',
-    borderRadius: 5,
-    marginTop: 10,
-  },
-  buttonText: {
-    fontWeight: 'bold',
-    color: '#064663',
-    fontSize: 20,
-  },
-  forgotPasswordText: {
-    fontWeight: 'bold',
-    color: '#064663',
-    fontSize: 15,
-    marginTop: 10,
-  },
-  signUpText: {
-    fontWeight: 'bold',
-    color: '#064663',
-    fontSize: 15,
-    marginTop: 10,
-  },
+    alignItems:'center', 
+     borderRadius :5, 
+     marginTop :10
+     },
+  buttonText :{
+    fontWeight:'bold', 
+    color:'#064663', 
+    fontSize :20
+     },
+   forgotPasswordText :{
+    fontWeight:'bold', 
+    color:'#064663', 
+    fontSize :15, 
+    marginTop :10
+     },
+   signUpText :{
+    fontWeight:'bold', 
+    color:'#064663', 
+    fontSize :15, 
+    marginTop :10
+     }
 });

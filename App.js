@@ -44,7 +44,7 @@ function App({navigation}) {
     <NavigationContainer>
   
         <Stack.Navigator
-          initialRouteName="Splash"
+          initialRouteName="Chats"
           screenOptions={{
              headerStyle: {
                backgroundColor: '#064663',
