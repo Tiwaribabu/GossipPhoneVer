@@ -1,6 +1,6 @@
 import { StyleSheet, Text, View,LogBox } from 'react-native'
 import React from 'react'
-import {auth} from '../firebase';
+import firebase from '../firebase';
 
 
 import{ useEffect, useState } from 'react'
