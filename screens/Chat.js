@@ -1,10 +1,7 @@
-// @refresh reset
 import React, { useCallback, useContext, useEffect, useState } from "react";
 import { View, Text, ImageBackground, TouchableOpacity, Image } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useRoute } from "@react-navigation/native";
-import "react-native-get-random-values";
-import { nanoid } from "nanoid";
 import { auth, db } from "../firebase";
 import GlobalContext from "../context/Context";
 import { addDoc, collection, doc, onSnapshot, setDoc, updateDoc } from "@firebase/firestore";
@@ -12,8 +9,6 @@ import { Actions, Bubble, GiftedChat, InputToolbar } from "react-native-gifted-c
 import { pickImage, uploadImage } from "../utils";
 import ImageView from "react-native-image-viewing";
 import firebase from '../firebase'
-
-const randomId = nanoid();
 
 export default function Chat() {
   const [roomHash, setRoomHash] = useState("");
@@ -35,7 +30,7 @@ export default function Chat() {
       }
     : { name: currentUser.displayName, _id: currentUser.uid };
 
-  const roomId = room ? room.id : randomId;
+  const roomId = room ? room.id : `${currentUser.phoneNumber}:${userB.phoneNumber}`;
   const roomRef = doc(db, "rooms", roomId);
   const roomMessagesRef = collection(db, "rooms", roomId, "messages");
 
