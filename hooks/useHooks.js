@@ -39,6 +39,6 @@ function mapContactToUser(contact) {
       contact.firstName && contact.lastName
         ? `${contact.firstName} ${contact.lastName}`
         : contact.firstName,
-    phoneNumber: contact.phoneNumbers[0].number,
+    phoneNumber: contact.phoneNumbers[0].number.replace(/\s+/g, ''),
   };
 }
