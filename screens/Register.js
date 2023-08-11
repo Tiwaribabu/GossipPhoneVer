@@ -10,6 +10,7 @@ import firebase from 'firebase/compat/app';
 import { firebaseConfig } from '../firebase';
 
 const screenheight = Dimensions.get("window").height;
+const screenwidth = Dimensions.get("window").width
 
 export default function Register({ navigation }) {
   const [phoneNumber, setPhoneNumber] = useState('');
@@ -55,14 +56,14 @@ export default function Register({ navigation }) {
   };
 
   return (
-    <KeyboardAwareScrollView style={{ flex: 1 }}>
+    <View style={{ flex: 1 }}>
       <ImageBackground source={require('../assets/Flash.jpg')} style={styles.background} resizeMode="cover">
         <FirebaseRecaptchaVerifierModal
           ref={recaptchaVerifier}
           firebaseConfig={firebaseConfig}
         />
-        <Animatable.View animation="slideInUp" style={styles.container}>
-          <Image source={require('../assets/logo.png')} style={styles.logo} />
+        <Animatable.View animation="fadeInUpBig" duration={1500} style={styles.container}>
+          <Animatable.Image animation="bounceIn" duration={2000} source={require('../assets/logo.png')} style={styles.logo} />
           <Text style={styles.title}>Welcome to Chat App</Text>
           <Text style={styles.subTitle}>Connect with friends globally</Text>
           <Input
@@ -74,9 +75,11 @@ export default function Register({ navigation }) {
             autoCompleteType='tel'
             keyboardType='phone-pad'
           />
-          <TouchableOpacity style={styles.button} onPress={handleSendOtp}>
-            <Text style={styles.buttonText}>Send OTP</Text>
-          </TouchableOpacity>
+          <Animatable.View animation="fadeInLeft" duration={2000}>
+            <TouchableOpacity style={styles.button} onPress={handleSendOtp}>
+              <Text style={styles.buttonText}>Send OTP</Text>
+            </TouchableOpacity>
+          </Animatable.View>
           <Input
             placeholder='OTP'
             leftIcon={<Icon name='lock' size={18} color='grey' />}
@@ -86,15 +89,17 @@ export default function Register({ navigation }) {
             autoCompleteType='password'
             secureTextEntry
           />
-          <TouchableOpacity style={styles.button} onPress={handleVerifyOtp}>
-            <Text style={styles.buttonText}>Verify OTP</Text>
-          </TouchableOpacity>
+          <Animatable.View animation="fadeInRight" duration={2000}>
+            <TouchableOpacity style={styles.button} onPress={handleVerifyOtp}>
+              <Text style={styles.buttonText}>Verify OTP</Text>
+            </TouchableOpacity>
+          </Animatable.View>
           <TouchableOpacity onPress={openLoginScreen}>
             <Text style={styles.signUpText}>Already a user? Sign in</Text>
           </TouchableOpacity>
         </Animatable.View>
       </ImageBackground>
-    </KeyboardAwareScrollView>
+    </View>
   );
 }
 
@@ -102,12 +107,13 @@ const styles = StyleSheet.create({
   background: {
     flex: 1,
     height: screenheight,
+    width: screenwidth
   },
   container: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: 'rgba(255, 255, 255, 0.8)',
+    backgroundColor: 'rgba(255, 255, 255, 0.9)',
     padding: 20,
     borderTopEndRadius: 50,
   },
@@ -123,7 +129,6 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     textAlign: 'center',
   },
-
   subTitle: {
     fontSize: 16,
     fontWeight: 'bold',
@@ -131,45 +136,24 @@ const styles = StyleSheet.create({
     marginBottom: 20,
     textAlign: 'center',
   },
-  errorText: {
-    color: 'red',
-    marginBottom: 10,
-    textAlign: 'center',
-  },
-  messageText: {
-    color: 'green',
-    marginBottom: 10,
-    textAlign: 'center',
-  },
-  loadingText: {
-    color: '#064663',
-    marginBottom: 10,
-    textAlign: 'center',
-  },
   button: {
-    width: '60%',
-    height: 40,
+    width: 150, // Increased button width
+    height: 60, // Increased button height
     backgroundColor: '#FAAB78',
     justifyContent: 'center',
-    alignItems:'center', 
-     borderRadius :5, 
-     marginTop :10
-     },
-  buttonText :{
-    fontWeight:'bold', 
-    color:'#064663', 
-    fontSize :20
-     },
-   forgotPasswordText :{
-    fontWeight:'bold', 
-    color:'#064663', 
-    fontSize :15, 
-    marginTop :10
-     },
-   signUpText :{
-    fontWeight:'bold', 
-    color:'#064663', 
-    fontSize :15, 
-    marginTop :10
-     }
+    alignItems: 'center',
+    borderRadius: 10,
+    marginTop: 10
+  },
+  buttonText: {
+    fontWeight: 'bold',
+    color: '#064663',
+    fontSize: 20
+  },
+  signUpText: {
+    fontWeight: 'bold',
+    color: '#064663',
+    fontSize: 15,
+    marginTop: 10
+  }
 });
