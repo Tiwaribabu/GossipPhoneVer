@@ -9,7 +9,7 @@
       ]
     ],
     "name": "chatApp",
-    "slug": "chatApp",
+    "slug": "gossips",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -42,8 +42,9 @@
     },
     "extra": {
       "eas": {
-        "projectId": "dcab877d-2c82-4d0a-bac6-e96d520fe74a"
+        "projectId": "533fdff7-8258-42f9-8b76-a04673dcad1c"
       }
-    }
+    },
+    "owner": "tiwarbabu"
   }
 }
