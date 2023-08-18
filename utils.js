@@ -1,7 +1,7 @@
 import * as ImagePicker from "expo-image-picker";
 import "react-native-get-random-values";
 import { nanoid }from 'nanoid'
-import {ref, uploadBytes, getDownloadURL} from 'firebase/storage'
+import {ref, uploadBytes, getDownloadURL} from 'firebase/compat/storage'
 import { storage } from "./firebase"
 export async function pickImage() {
   let result = ImagePicker.launchCameraAsync();
