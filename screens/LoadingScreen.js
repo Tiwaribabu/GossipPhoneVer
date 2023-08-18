@@ -33,13 +33,11 @@ export default function LoadingScreen ({navigation}) {
   }, [])
     
   return (
-    <NavigationContainer>
-      <Stack.Navigator initialRouteName="Chats">
-        <Stack.Screen name="LoadingScreen" component={LoadingScreen} />
-        <Stack.Screen name="Chats" component={Chats} />
-        <Stack.Screen name="Profile" component={Profile} />
-      </Stack.Navigator>
-    </NavigationContainer>
+    <View style = {{alignSelf:'center',justifyContent:'center',marginTop:200}}>
+      <Text style ={{textAlign:'center',fontSize:25,color:'blue'}}>
+        Loading!!!
+      </Text>
+    </View>
   );
 };
 
