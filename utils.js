@@ -1,8 +1,8 @@
 import * as ImagePicker from "expo-image-picker";
-import "react-native-get-random-values";
 import { nanoid } from 'nanoid';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/compat/storage';
-import { storage } from "./firebase";
+import { getStorage } from "./firebase";
+import firebase from "./firebase"
 
 export async function pickImage() {
   let result = ImagePicker.launchCameraAsync();
@@ -30,16 +30,13 @@ export async function uploadImage(uri, path, fName) {
   });
 
   const fileName = fName || nanoid();
-  const imageRef = ref(storage, `${path}/${fileName}.jpeg`);
+  const storageRef = firebase.storage().ref();
+  const imageRef = storageRef.child(`${path}/${fileName}.jpeg`);
 
-  const snapshot = await uploadBytes(imageRef, blob, {
-    contentType: "image/jpeg",
-  });
-
+  const snapshot = await imageRef.put(blob, { contentType: "image/jpeg" });
   blob.close();
 
-  const url = await getDownloadURL(snapshot.ref);
-
+  const url = await snapshot.ref.getDownloadURL();
   return { url, fileName };
 }
 

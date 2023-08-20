@@ -121,10 +121,11 @@ export default function Chat() {
 
   async function handlePhotoPicker() {
     const result = await pickImage();
-    if (!result.canceled) {
-      await sendImage(result.uri);
+    if (!result.canceled && result.assets && result.assets[0].uri) {
+      await sendImage(result.assets[0].uri);
     }
   }
+  
 
   return (
     <ImageBackground
