@@ -24,3 +24,4 @@ const db = firebase.firestore();
 // Export Firebase and Firestore instances
 export default firebase;
 export { db };
+export const auth = firebase.auth();
